@@ -1,0 +1,168 @@
+{% extends "configuracion/sidebar.html" %}
+
+
+
+{% block links_block %}
+
+<!-- Custom fonts for this template -->
+<link href="{{ url_for('static', filename='vendor/fontawesome-free/css/all.min.css') }}" rel="stylesheet"
+  type="text/css">
+
+<link
+  href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i"
+  rel="stylesheet">
+
+
+
+<!-- Custom styles for this page -->
+<link href="{{ url_for('static', filename='vendor/datatables/dataTables.bootstrap4.min.css') }}" rel="stylesheet"
+  type="text/css">
+
+{% endblock %}
+
+{% block config_content %}
+
+<!-- Begin Page Content -->
+<div class="container-fluid">
+  <!-- Cabecera de página -->
+  <div class="d-sm-flex align-items-center justify-content-between mb-4">
+    <h1 class="h3 mb-0 text-gray-800">Opciones de pago</h1>
+    <a href="#" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm">
+      <!-- IFO: CREAR REPORTE TEMPORAL... PUEDE QUE NO LLEGUEMOS A HACERLO (PRIORIZAR FUNCIONALIDADES BÁSICAS) -->
+      <i class="fas fa-download fa-sm text-white-50"></i> Generar reporte
+    </a>
+  </div>
+
+  <!-- Mensajes flash de Flask -->
+  {% with messages = get_flashed_messages(with_categories=true) %}
+  {% if messages %}
+  {% for category, message in messages %}
+  <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+    {{ message }}
+  </div>
+  {% endfor %}
+  {% endif %}
+  {% endwith %}
+
+  <div class="card shadow mb-4">
+    <div class="card-header py-3">
+      <h6 class="m-0 font-weight-bold text-primary">Aqui puedes añadir o eliminar las tarjetas que has creado</h6>
+    </div>
+    <div class="card-body row">
+
+      <div class="row col-md-12 col-12">
+        <!-- SECCIÓN 1: Información Personal -->
+        <div class="col-md-12 mb-4">
+          <div class="p-3 border rounded bg-light shadow-sm h-100">
+            <h6 class="fw-bold mb-3 text-dark">
+              Tarjetas de
+              <span class="text-info fw-medium">Credito / Debito</span>
+              guardadas
+            </h6>
+
+            <div class="table-responsive">
+              <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                <thead>
+                  <tr>
+                    <th>Propietario</th>
+                    <th>Número</th>
+                    <th>Caducidad</th>
+                    <th>CVC</th>
+                    <th>Borrar</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {% for tarjeta in tarjetas %}
+                  <tr>
+                    <td>{{tarjeta.propietario_nombre}}</td>
+                    <td>{{tarjeta.numero}}</td>
+                    <td>{{tarjeta.caducidad}}</td>
+                    <td>{{tarjeta.cvc}}</td>
+                    <td>
+                      <form action="{{ url_for('config.eliminar_tarjeta') }}" method="POST" style="display:inline;">
+                        <input type="hidden" name="tarjeta_id" value="{{ tarjeta.id }}">
+                        <button type="submit" class="btn btn-sm btn-danger"
+                          onclick="return confirm('¿Seguro que quieres eliminar esta tarjeta?');">
+                          <i class="fas fa-trash-alt"></i> Borrar
+                        </button>
+                      </form>
+                    </td>
+                  </tr>
+                  {% endfor %}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- SECCIÓN 2: Cambiar Correo Electrónico -->
+        <div class="col-md-12 mb-4">
+          <div class="p-4 border rounded bg-white shadow-sm">
+            <div class="d-flex align-items-center mb-3">
+              <i class="bi bi-credit-card-2-front me-2 text-primary"></i>
+              <h6 class="fw-bold mb-0">Añadir nueva tarjeta de crédito</h6>
+            </div>
+
+            <form class="row g-2 align-items-end" action="{{ url_for('config.anadir_tarjeta') }}" method="POST">
+
+              <!-- Propietario -->
+              <div class="col-12 col-md-3">
+                <label class="small fw-semibold text-muted mb-1" for="propietario_tarjeta">Nombre en la tarjeta</label>
+                <input class="form-control form-control-sm shadow-none" type="text" id="propietario_tarjeta"
+                  name="propietario_tarjeta" placeholder="Titular"
+                  value="{{ datos_previos.propietario if datos_previos else '' }}" required>
+              </div>
+
+              <!-- Número de Tarjeta -->
+              <div class="col-12 col-md-3">
+                <label class="small fw-semibold text-muted mb-1" for="numero_tarjeta">Número de tarjeta</label>
+                <input class="form-control form-control-sm shadow-none" type="text" id="numero_tarjeta"
+                  name="numero_tarjeta" placeholder="0000 0000 0000 0000" inputmode="numeric" pattern="[0-9\s]{13,19}"
+                  value="{{ datos_previos.numero if datos_previos else '' }}" required>
+              </div>
+
+              <!-- Caducidad -->
+              <div class="col-6 col-md-2">
+                <label class="small fw-semibold text-muted mb-1">Caducidad</label>
+                <div class="input-group input-group-sm">
+                  <input class="form-control text-center shadow-none" type="text" placeholder="MM"
+                    name="caducidad_tarjeta_mes" maxlength="2" inputmode="numeric"
+                    value="{{ datos_previos.mes if datos_previos else '' }}" required>
+                  <!-- <span class="input-group-text bg-light">/</span> -->
+                  <input class="form-control text-center shadow-none" type="text" placeholder="AA"
+                    name="caducidad_tarjeta_ano" maxlength="2" inputmode="numeric"
+                    value="{{ datos_previos.ano if datos_previos else '' }}" required>
+                </div>
+              </div>
+
+              <!-- CVC -->
+              <div class="col-6 col-md-1">
+                <label class="small fw-semibold text-muted mb-1" for="cvc_tarjeta">CVC</label>
+                <input class="form-control form-control-sm shadow-none text-center" type="password" id="cvc_tarjeta"
+                  name="cvc_tarjeta" maxlength="4" placeholder="123" inputmode="numeric"
+                  value="{{ datos_previos.cvc if datos_previos else '' }}" required>
+              </div>
+
+              <!-- Botón de Acción -->
+              <div class="col-12 col-md-3 d-grid">
+                <button class="btn btn-primary btn-sm fw-bold" type="submit">
+                  <i class="bi bi-plus-lg me-1"></i> GUARDAR TARJETA
+                </button>
+              </div>
+
+            </form>
+          </div>
+        </div>
+
+      </div> <!-- End Row -->
+
+      <hr>
+      <div class="text-muted small col-12">
+        Todas las tarjetas se almacenan de forma segura y cumplen con la normativa PCI DSS. Tu seguridad es nuestra
+        prioridad.
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock %}
