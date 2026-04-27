@@ -1,0 +1,216 @@
+{% extends "gestionRecetas/base_gestion.html" %}
+
+{% block title %}Nueva Receta{% endblock %}
+
+{% block content %}
+
+<div class="min-h-screen bg-stone-50 flex items-center justify-center p-6">
+
+  <!-- Disparador de Modal de Error (oculto) -->
+  {% if error_modal %}
+  <div id="error-modal-trigger" data-error="{{ error_modal }}" style="display: none;"></div>
+  {% endif %}
+
+  <!-- Mensajes de Flash -->
+  {% with messages = get_flashed_messages(with_categories=true) %}
+  {% if messages %}
+  {% for category, message in messages %}
+  <div class="fixed top-4 right-4 max-w-sm z-50">
+    {% if category == 'error' %}
+    <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-lg shadow-lg flex items-start gap-3">
+      <span class="text-xl">⚠️</span>
+      <div>
+        <p class="font-semibold">Error</p>
+        <p class="text-sm">{{ message }}</p>
+      </div>
+    </div>
+    {% elif category == 'success' %}
+    <div
+      class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded-lg shadow-lg flex items-start gap-3">
+      <span class="text-xl">✓</span>
+      <div>
+        <p class="font-semibold">Éxito</p>
+        <p class="text-sm">{{ message }}</p>
+      </div>
+    </div>
+    {% endif %}
+  </div>
+  {% endfor %}
+  {% endif %}
+  {% endwith %}
+
+  <form action="{{ url_for('crear.guardar') }}" method="POST" enctype="multipart/form-data"
+    class="w-full max-w-4xl bg-white rounded-2xl shadow-xl p-8 border border-stone-300">
+
+    <h1 class="text-2xl font-semibold text-stone-800 mb-6">
+      Nueva Receta
+    </h1>
+
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+
+      <div>
+        <div id="foto_principal_trigger"
+          class="flex flex-col items-center justify-center w-full h-48 border-2 border-dashed border-stone-400 rounded-xl bg-stone-50 hover:bg-stone-100 cursor-pointer transition">
+          <span class="text-sm font-medium text-stone-700 mb-1">
+            Haz clic para agregar una imagen
+          </span>
+          <span class="text-xs text-stone-500">
+            JPG, PNG, máximo 5MB
+          </span>
+        </div>
+
+        <input id="foto_principal" type="file" name="foto" class="hidden" />
+      </div>
+
+
+
+      <div class="md:col-span-2 space-y-5">
+
+        <div>
+          <label class="block text-sm font-medium text-stone-700 mb-1">
+            Título de la receta
+          </label>
+          <input type="text" name="titulo" placeholder="Ej: Pasta Carbonara Auténtica" value="{{ form_data.titulo }}"
+            class="w-full rounded-lg border border-stone-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-amber-800 focus:border-amber-800" />
+        </div>
+
+        <div>
+          <label class="block text-sm font-medium text-stone-700 mb-1">
+            Descripción
+          </label>
+          <textarea name="descripcion" rows="3" placeholder="Describe tu receta..."
+            class="w-full rounded-lg border border-stone-300 px-3 py-2 text-sm resize-none focus:outline-none focus:ring-2 focus:ring-amber-800 focus:border-amber-800">{{ form_data.descripcion }}</textarea>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+          <div>
+            <label class="block text-sm font-medium text-stone-700 mb-1">
+              Tiempo de cocción
+            </label>
+            <input type="text" name="tiempo" placeholder="Ej: 30 min" value="{{ form_data.tiempo }}"
+              class="w-full rounded-lg border border-stone-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-amber-800 focus:border-amber-800" />
+          </div>
+
+          <div>
+            <label class="block text-sm font-medium text-stone-700 mb-1">
+              Porciones
+            </label>
+            <input type="number" name="raciones" min="1" value="{{ form_data.raciones or '4' }}"
+              class="w-full rounded-lg border border-stone-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-amber-800 focus:border-amber-800" />
+          </div>
+
+          <div>
+            <label class="block text-sm font-medium text-stone-700 mb-1">
+              Categoría
+            </label>
+            <select name="categoria"
+              class="w-full rounded-lg border border-stone-300 px-3 py-2 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-amber-800 focus:border-amber-800">
+              <option {% if form_data.categoria=='Plato Principal' %}selected{% endif %}>Plato Principal</option>
+              <option {% if form_data.categoria=='Entrante' %}selected{% endif %}>Entrante</option>
+              <option {% if form_data.categoria=='Postre' %}selected{% endif %}>Postre</option>
+              <option {% if form_data.categoria=='Desayuno' %}selected{% endif %}>Desayuno</option>
+              <option {% if form_data.categoria=='Snack' %}selected{% endif %}>Snack</option>
+            </select>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="mt-8">
+      <h2 class="text-sm font-semibold text-stone-800 mb-3">
+        Ingredientes
+      </h2>
+
+      <div id="ingredientes-container" class="space-y-3">
+        {% if form_data.ingredientes %}
+        {% for ingrediente in form_data.ingredientes %}
+        <div class="flex gap-3 ingrediente-item">
+          <input type="text" name="ingredientes[]" placeholder="Ej: 200g de pasta" value="{{ ingrediente }}"
+            class="flex-1 rounded-lg border border-stone-300 px-3 py-2 text-sm" />
+          <button type="button" class="remove-ingrediente text-red-600 font-bold">✕</button>
+        </div>
+        {% endfor %}
+        {% else %}
+        <div class="flex gap-3 ingrediente-item">
+          <input type="text" name="ingredientes[]" placeholder="Ej: 200g de pasta"
+            class="flex-1 rounded-lg border border-stone-300 px-3 py-2 text-sm" />
+          <button type="button" class="remove-ingrediente text-red-600 font-bold">✕</button>
+        </div>
+        {% endif %}
+      </div>
+
+      <button type="button" id="add-ingrediente"
+        class="mt-2 inline-flex items-center justify-center rounded-lg border border-amber-800 px-4 py-2 text-sm font-medium text-amber-900 hover:bg-amber-100 transition">
+        + Agregar ingrediente
+      </button>
+    </div>
+
+    <div class="mt-8">
+      <h2 class="text-sm font-semibold text-stone-800 mb-3">
+        Instrucciones
+      </h2>
+
+      <div id="pasos-container" class="space-y-4">
+        {% if form_data.pasos %}
+        {% for paso in form_data.pasos %}
+        <div class="paso-item p-4 rounded-lg bg-stone-50 border border-stone-200 space-y-3">
+          <div class="flex items-start justify-between gap-3">
+            <div class="flex items-start gap-3 flex-1">
+              <div
+                class="numero-paso w-8 h-8 flex items-center justify-center rounded-full bg-amber-800 text-white text-xs font-semibold flex-shrink-0 mt-0.5">
+                {{ loop.index }}</div>
+              <textarea name="pasos[]" rows="2" placeholder="Describe este paso..."
+                class="flex-1 rounded-lg border border-stone-300 px-3 py-2 text-sm resize-none focus:outline-none focus:ring-2 focus:ring-amber-800">{{ paso }}</textarea>
+            </div>
+            <button type="button"
+              class="remove-paso text-red-600 font-bold text-lg hover:text-red-700 flex-shrink-0">✕</button>
+          </div>
+        </div>
+        {% endfor %}
+        {% else %}
+        <div class="paso-item p-4 rounded-lg bg-stone-50 border border-stone-200 space-y-3">
+          <div class="flex items-start justify-between gap-3">
+            <div class="flex items-start gap-3 flex-1">
+              <div
+                class="numero-paso w-8 h-8 flex items-center justify-center rounded-full bg-amber-800 text-white text-xs font-semibold flex-shrink-0 mt-0.5">
+                1</div>
+              <textarea name="pasos[]" rows="2" placeholder="Describe este paso..."
+                class="flex-1 rounded-lg border border-stone-300 px-3 py-2 text-sm resize-none focus:outline-none focus:ring-2 focus:ring-amber-800"></textarea>
+            </div>
+            <button type="button"
+              class="remove-paso text-red-600 font-bold text-lg hover:text-red-700 flex-shrink-0">✕</button>
+          </div>
+        </div>
+        {% endif %}
+      </div>
+
+      <button type="button" id="add-paso"
+        class="mt-3 inline-flex items-center justify-center rounded-lg border border-amber-800 px-4 py-2 text-sm font-medium text-amber-900 hover:bg-amber-100 transition">
+        + Agregar paso
+      </button>
+    </div>
+
+
+    <div class="mt-10 flex justify-end gap-3">
+      <a href="{{ url_for('cuenta.index') }}"
+        class="px-4 py-2 text-sm font-medium text-stone-700 rounded-lg border border-stone-300 hover:bg-stone-100 transition">
+        Cancelar
+      </a>
+
+      <button type="submit"
+        class="px-4 py-2 text-sm font-medium text-white rounded-lg bg-amber-800 hover:bg-amber-900 transition">
+        Publicar Receta
+      </button>
+    </div>
+
+  </form>
+
+</div>
+
+{% endblock %}
+
+{% block extra_scripts %}
+<script src="{{ url_for('static', filename='js/errorModal.js') }}"></script>
+<script src="{{ url_for('static', filename='js/crearRecetas.js') }}"></script>
+<script src="{{ url_for('static', filename='js/crearRecetasUI.js') }}"></script>
+{% endblock %}

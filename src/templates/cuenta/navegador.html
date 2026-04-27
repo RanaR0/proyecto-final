@@ -1,0 +1,106 @@
+<nav class="w-full border-b bg-white sticky top-0 z-50">
+
+    <div class="w-full bg-white border-b">
+        <div class="flex items-center justify-between px-6 py-3">
+
+            <div class="flex items-center gap-3">
+                <div class="w-8 h-8 rounded-full bg-gray-200"></div>
+                <div class="flex flex-col">
+                    <span class="font-semibold text-gray-800 text-sm">Mi Recetario</span>
+                    <span class="text-xs text-gray-500">Comparte tus recetas</span>
+                </div>
+            </div>
+
+            <div class="flex items-center gap-4">
+
+                <a href="/logout" class="px-4 py-2 rounded-full bg-amber-800 text-white hover:bg-amber-900 transition">
+                    Cerrar sesión
+                </a>
+
+
+            </div>
+
+        </div>
+    </div>
+
+    <div class="hidden md:flex items-center gap-8 px-6">
+
+        <a href="/" class="flex items-center gap-2 py-4 border-b-2 transition
+        {% if request.path == '/' %}
+            text-amber-800 border-amber-800
+        {% else %}
+            text-gray-600 hover:text-gray-900 border-transparent hover:border-gray-400
+        {% endif %}
+        ">
+            <span>Inicio</span>
+        </a>
+
+        <a href="/amigos" class="flex items-center gap-2 py-4 border-b-2 transition
+        {% if request.path == '/amigos' %}
+            text-amber-800 border-amber-800
+        {% else %}
+            text-gray-600 hover:text-gray-900 border-transparent hover:border-gray-400
+        {% endif %}
+        ">
+            <span>Amigos</span>
+        </a>
+
+        <a href="/busqueda" class="flex items-center gap-2 py-4 border-b-2 transition
+        {% if request.path == '/busqueda' %}
+            text-amber-800 border-amber-800
+        {% else %}
+            text-gray-600 hover:text-gray-900 border-transparent hover:border-gray-400
+        {% endif %}
+        ">
+            <span>Búsqueda</span>
+        </a>
+
+        <a href="/crear" class="flex items-center gap-2 py-4 border-b-2 transition
+        {% if request.path == '/crear' %}
+            text-amber-800 border-amber-800
+        {% else %}
+            text-gray-600 hover:text-gray-900 border-transparent hover:border-gray-400
+        {% endif %}
+        ">
+            <span>Crear</span>
+        </a>
+
+        <a href="/perfil" class="flex items-center gap-2 py-4 border-b-2 transition
+        {% if request.path == '/perfil' %}
+            text-amber-800 border-amber-800
+        {% else %}
+            text-gray-600 hover:text-gray-900 border-transparent hover:border-gray-400
+        {% endif %}
+        ">
+            <span>Perfil</span>
+        </a>
+
+    </div>
+</nav>
+
+<div class="fixed inset-x-0 bottom-0 z-50 bg-white border-t shadow-inner md:hidden">
+    <div class="flex justify-around items-center h-16 px-2">
+        <a href="/" class="flex flex-col items-center justify-center text-lg transition w-16
+            {% if request.path == '/' %}text-amber-800{% else %}text-gray-600 hover:text-gray-900{% endif %}">
+            <i class="fas fa-home"></i>
+        </a>
+        <a href="/amigos" class="flex flex-col items-center justify-center text-lg transition w-16
+            {% if request.path == '/amigos' %}text-amber-800{% else %}text-gray-600 hover:text-gray-900{% endif %}">
+            <i class="fas fa-users"></i>
+        </a>
+        <a href="/crear"
+            class="flex flex-col items-center justify-center text-xl transition bg-amber-800 text-white rounded-full w-12 h-12 shadow-lg hover:bg-amber-900">
+            <i class="fas fa-plus"></i>
+        </a>
+        <a href="/busqueda" class="flex flex-col items-center justify-center text-lg transition w-16
+            {% if request.path == '/busqueda' %}text-amber-800{% else %}text-gray-600 hover:text-gray-900{% endif %}">
+            <i class="fas fa-search"></i>
+        </a>
+        <a href="/perfil" class="flex flex-col items-center justify-center text-lg transition w-16
+            {% if request.path == '/perfil' %}text-amber-800{% else %}text-gray-600 hover:text-gray-900{% endif %}">
+            <i class="fas fa-user"></i>
+        </a>
+    </div>
+</div>
+
+<div class="h-16 md:hidden"></div>

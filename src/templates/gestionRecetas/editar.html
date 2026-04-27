@@ -1,0 +1,262 @@
+{% extends "gestionRecetas/base_gestion.html" %}
+
+{% block title %}Editar Receta{% endblock %}
+
+{% block content %}
+
+<div class="min-h-screen bg-stone-50 flex items-center justify-center p-6" style="background-color: var(--bg-primary);">
+
+  <!-- Disparador de Modal de Error (oculto) -->
+  {% if error_modal %}
+  <div id="error-modal-trigger" data-error="{{ error_modal }}" style="display: none;"></div>
+  {% endif %}
+
+  <!-- Mensajes de Flash -->
+  {% with messages = get_flashed_messages(with_categories=true) %}
+  {% if messages %}
+  {% for category, message in messages %}
+  <div class="fixed top-4 right-4 max-w-sm z-50">
+    {% if category == 'error' %}
+    <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-lg shadow-lg flex items-start gap-3">
+      <span class="text-xl">⚠️</span>
+      <div>
+        <p class="font-semibold">Error</p>
+        <p class="text-sm">{{ message }}</p>
+      </div>
+    </div>
+    {% elif category == 'success' %}
+    <div
+      class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded-lg shadow-lg flex items-start gap-3">
+      <span class="text-xl">✓</span>
+      <div>
+        <p class="font-semibold">Éxito</p>
+        <p class="text-sm">{{ message }}</p>
+      </div>
+    </div>
+    {% endif %}
+  </div>
+  {% endfor %}
+  {% endif %}
+  {% endwith %}
+
+  <form action="{{ url_for('crear.actualizar') }}" method="POST" enctype="multipart/form-data"
+    class="w-full max-w-4xl rounded-2xl shadow-xl p-8"
+    style="background-color: var(--card-bg); border: 1px solid var(--border);">
+
+    <!-- Sección de versiones -->
+    {% if versiones and versiones|length > 1 %}
+    <div class="mb-6 p-4 rounded-lg" style="background-color: var(--bg-secondary); border: 1px solid var(--border);">
+      <label class="block text-sm font-medium mb-2" style="color: var(--text-primary);">Versiones disponibles</label>
+      <select id="version-selector"
+        class="w-full px-4 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-800"
+        style="background-color: var(--input-bg); color: var(--input-text); border: 1px solid var(--input-border);">
+        {% for v in versiones %}
+        <option value="{{ v.id }}" {% if v.id==receta.id %}selected{% endif %}>
+          Versión {{ v.version }} {% if v.id == receta.id %}(Actual){% endif %}
+        </option>
+        {% endfor %}
+      </select>
+      <p class="text-xs mt-2" style="color: var(--text-secondary);">
+        Si seleccionas una versión anterior, las versiones más nuevas se eliminarán permanentemente.
+      </p>
+    </div>
+    {% endif %}
+
+    <!-- Información de copia -->
+    {% if receta.copia_de %}
+    <div class="mb-6 p-4 rounded-lg" style="background-color: rgba(217, 119, 6, 0.1); border: 1px solid #d97706;">
+      <p class="text-sm" style="color: #d97706;">
+        <i class="fas fa-copy mr-2"></i>
+        Esta es una copia de la receta "<strong>{{ receta.receta_original.nombre }}</strong>"
+      </p>
+      <p class="text-sm mt-2" style="color: #d97706;">
+        <i class="fas fa-user-circle mr-2"></i>
+        Creador original: <strong>{{ receta.creador_original if receta.creador_original else 'Desconocido' }}</strong>
+      </p>
+    </div>
+    {% endif %}
+
+    <h1 class="text-2xl font-semibold mb-6" style="color: var(--text-primary);">
+      Editar Receta
+    </h1>
+
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+
+      <div>
+        <div id="foto_principal_trigger"
+          class="flex flex-col items-center justify-center w-full h-48 border-2 border-dashed rounded-xl cursor-pointer transition"
+          style="border-color: var(--input-border); background-color: var(--bg-secondary);">
+          {% if receta.foto %}
+          <img src="{{ url_for('static', filename=receta.foto) }}" class="w-full h-full object-cover rounded-xl" />
+          {% else %}
+          <span class="text-sm font-medium" style="color: var(--text-primary);">
+            Haz clic para cambiar imagen
+          </span>
+          <span class="text-xs" style="color: var(--text-secondary);">
+            JPG, PNG, máximo 5MB
+          </span>
+          {% endif %}
+        </div>
+
+        <input id="foto_principal" type="file" name="foto" class="hidden" />
+      </div>
+
+      <div class="md:col-span-2 space-y-5">
+
+        <div>
+          <label class="block text-sm font-medium mb-2" style="color: var(--text-primary);">Título de la receta</label>
+          <input type="text" name="titulo" placeholder="Ej: Pasta Carbonara Auténtica" value="{{ receta.nombre }}"
+            class="w-full px-4 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-800 focus:border-transparent"
+            style="background-color: var(--input-bg); color: var(--input-text); border: 1px solid var(--input-border);" />
+        </div>
+
+        <div>
+          <label class="block text-sm font-medium mb-2" style="color: var(--text-primary);">Descripción</label>
+          <textarea name="descripcion" rows="3" placeholder="Describe tu receta..."
+            class="w-full px-4 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-800 focus:border-transparent resize-none"
+            style="background-color: var(--input-bg); color: var(--input-text); border: 1px solid var(--input-border);">{{ receta.descripcion }}</textarea>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+          <div>
+            <label class="block text-sm font-medium mb-2" style="color: var(--text-primary);">Tiempo de cocción</label>
+            <input type="text" name="tiempo" placeholder="Ej: 30 min" value="{{ receta.tiempo }}"
+              class="w-full px-4 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-800 focus:border-transparent"
+              style="background-color: var(--input-bg); color: var(--input-text); border: 1px solid var(--input-border);" />
+          </div>
+
+          <div>
+            <label class="block text-sm font-medium mb-2" style="color: var(--text-primary);">Porciones</label>
+            <input type="number" name="raciones" min="1" value="{{ receta.raciones }}"
+              class="w-full px-4 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-800 focus:border-transparent"
+              style="background-color: var(--input-bg); color: var(--input-text); border: 1px solid var(--input-border);" />
+          </div>
+
+          <div>
+            <label class="block text-sm font-medium mb-2" style="color: var(--text-primary);">Categoría</label>
+            <select name="categoria"
+              class="w-full px-4 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-800 focus:border-transparent"
+              style="background-color: var(--input-bg); color: var(--input-text); border: 1px solid var(--input-border);">
+              <option value="Plato Principal" {% if receta.categoria=='Plato Principal' %}selected{% endif %}>Plato
+                Principal</option>
+              <option value="Entrante" {% if receta.categoria=='Entrante' %}selected{% endif %}>Entrante</option>
+              <option value="Postre" {% if receta.categoria=='Postre' %}selected{% endif %}>Postre</option>
+              <option value="Desayuno" {% if receta.categoria=='Desayuno' %}selected{% endif %}>Desayuno</option>
+              <option value="Snack" {% if receta.categoria=='Snack' %}selected{% endif %}>Snack</option>
+            </select>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="mt-8">
+      <h2 class="text-sm font-semibold mb-3" style="color: var(--text-primary);">
+        Ingredientes
+      </h2>
+
+      <div id="ingredientes-container" class="space-y-3">
+        {% for rel in ingredientes %}
+        <div class="flex gap-3 ingrediente-item">
+          <input type="text" name="ingredientes[]" placeholder="Ej: 200g de pasta" value="{{ rel.ingrediente.nombre }}"
+            class="flex-1 px-4 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-800"
+            style="background-color: var(--input-bg); color: var(--input-text); border: 1px solid var(--input-border);" />
+          <button type="button" class="remove-ingrediente text-red-600 font-bold">✕</button>
+        </div>
+        {% endfor %}
+      </div>
+
+      <button type="button" id="add-ingrediente"
+        class="mt-2 inline-flex items-center justify-center rounded-lg px-4 py-2 text-sm font-medium transition"
+        style="border: 1px solid #d97706; color: #d97706;">
+        + Agregar ingrediente
+      </button>
+    </div>
+
+    <div class="mt-8">
+      <h2 class="text-sm font-semibold mb-3" style="color: var(--text-primary);">
+        Instrucciones
+      </h2>
+
+      <div id="pasos-container" class="space-y-4">
+        {% for paso in pasos %}
+        <div class="paso-item p-4 rounded-lg"
+          style="background-color: var(--bg-secondary); border: 1px solid var(--border);">
+          <div class="flex gap-4">
+            <!-- Número del paso -->
+            <div
+              class="numero-paso w-8 h-8 flex items-center justify-center rounded-full text-white text-sm font-semibold flex-shrink-0 mt-1"
+              style="background-color: #d97706;">
+              {{ loop.index }}</div>
+
+            <!-- Contenido principal -->
+            <div class="flex-1 space-y-3">
+              <textarea name="pasos[]" rows="2" placeholder="Describe este paso..."
+                class="w-full px-4 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-800 resize-none"
+                style="background-color: var(--input-bg); color: var(--input-text); border: 1px solid var(--input-border);">{{ paso.texto }}</textarea>
+
+              <!-- Fotos existentes -->
+              {% if paso.fotos and paso.fotos|length > 0 %}
+              <div class="space-y-3">
+                <p class="text-xs font-medium" style="color: var(--text-secondary);">📸 Foto actual:</p>
+                <div class="space-y-2">
+                  {% for foto in paso.fotos %}
+                  <div
+                    class="relative group h-40 rounded-lg overflow-hidden border-2 border-amber-200 shadow-sm hover:shadow-md transition">
+                    <img src="{{ url_for('static', filename=foto.foto) }}" class="w-full h-full object-cover"
+                      alt="Foto paso" data-path="{{ foto.foto }}"
+                      onerror="this.onerror=null; this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22160%22 height=%22160%22%3E%3Crect fill=%22%23fef3c7%22 width=%22160%22 height=%22160%22/%3E%3Ctext x=%2250%25%22 y=%2250%25%22 font-size=%2212%22 fill=%22%23b45309%22 text-anchor=%22middle%22 dy=%22.3em%22%3ENo disponible%3C/text%3E%3C/svg%3E'" />
+                    <div
+                      class="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-40 transition flex items-center justify-center opacity-0 group-hover:opacity-100">
+                      <span class="text-white text-sm font-semibold">↻ Cambiar</span>
+                    </div>
+                  </div>
+                  {% endfor %}
+                </div>
+              </div>
+              {% endif %}
+
+              <!-- Input para nueva foto -->
+            
+            </div>
+
+            <!-- Botón eliminar paso -->
+            <button type="button"
+              class="remove-paso text-red-600 font-bold text-lg hover:text-red-700 flex-shrink-0">✕</button>
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+
+      <button type="button" id="add-paso"
+        class="mt-3 inline-flex items-center justify-center rounded-lg px-4 py-2 text-sm font-medium transition"
+        style="border: 1px solid #d97706; color: #d97706;">
+        + Agregar paso
+      </button>
+    </div>
+
+    <div class="mt-10 flex justify-end gap-3">
+      <button type="button" onclick="window.location.href='{{ url_for('cuenta.perfil') }}'"
+        class="px-4 py-2 text-sm font-medium rounded-lg transition hover:opacity-90"
+        style="background-color: var(--bg-secondary); color: var(--text-primary); border: 1px solid var(--border);">
+        Cancelar
+      </button>
+
+      <button type="submit" class="px-4 py-2 text-sm font-medium text-white rounded-lg transition hover:opacity-90"
+        style="background-color: #d97706;">
+        Actualizar Receta
+      </button>
+    </div>
+
+    <input type="hidden" name="receta_id" value="{{ receta.id }}" />
+
+  </form>
+
+</div>
+
+{% endblock %}
+
+{% block extra_scripts %}
+<script src="{{ url_for('static', filename='js/errorModal.js') }}"></script>
+<script src="{{ url_for('static', filename='js/crearRecetas.js') }}"></script>
+<script src="{{ url_for('static', filename='js/editarRecetasUI.js') }}"></script>
+{% endblock %}

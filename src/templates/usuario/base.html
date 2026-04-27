@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="es">
+
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Autenticación{% endblock %}</title>
+
+    <!-- Tailwind -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Cabin:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- Estilos de autenticación -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/auth.css') }}">
+
+    {% block extra_styles %}{% endblock %}
+  </head>
+
+  <body class="bg-stone-100 min-h-screen flex items-center justify-center">
+
+    <div class="w-full {% block card_width %}max-w-md{% endblock %} bg-white shadow-xl rounded-2xl p-10">
+
+      <!-- Título -->
+      <h1 class="text-3xl font-bold text-stone-900 text-center mb-6">
+        {% block heading %}Autenticación{% endblock %}
+      </h1>
+
+      <!-- Mensajes Flash -->
+      {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+      {% for category, message in messages %}
+      <div
+        class="{% if category == 'danger' %}bg-red-100 border border-red-400 text-red-700{% elif category == 'success' %}bg-green-100 border border-green-400 text-green-700{% else %}bg-blue-100 border border-blue-400 text-blue-700{% endif %} px-4 py-3 rounded mb-4">
+        {{ message }}
+      </div>
+      {% endfor %}
+      {% endif %}
+      {% endwith %}
+
+      <!-- Contenido específico de la página -->
+      {% block content %}{% endblock %}
+
+      <!-- Divisor -->
+      {% block show_divider %}{% if True %}
+      <div class="my-6 border-t border-stone-200"></div>
+      {% endif %}{% endblock %}
+
+      <!-- Footer con enlaces -->
+      {% block footer %}
+      <p class="text-center text-sm text-stone-600">
+        {% block footer_text %}{% endblock %}
+      </p>
+      {% endblock %}
+
+    </div>
+
+    <!-- Script de tema oscuro/claro -->
+    <script src="{{ url_for('static', filename='js/theme.js') }}"></script>
+
+    {% block extra_scripts %}{% endblock %}
+
+  </body>
+
+</html>

@@ -1,0 +1,125 @@
+{% extends "cuenta/base.html" %}
+
+{% block content %}
+
+<div class="max-w-4xl mx-auto px-6 py-6 md:py-10" style="background-color: var(--bg-primary);">
+
+  <h1 class="text-3xl font-bold mb-4 tracking-tight" style="color: var(--text-primary);">
+    {{ receta.nombre }}
+  </h1>
+
+  <div class="flex items-center justify-between mb-6 p-4 rounded-lg"
+    style="background-color: var(--bg-secondary); border: 1px solid var(--border);">
+    <div class="flex items-center gap-3">
+      <div class="w-12 h-12 rounded-full overflow-hidden" style="background-color: var(--bg-secondary);">
+        {% if autor.foto %}
+        <img src="{{ url_for('static', filename=autor.foto) }}" class="w-full h-full object-cover">
+        {% else %}
+        <div class="w-full h-full flex items-center justify-center text-lg font-semibold"
+          style="color: var(--text-secondary);">
+          {{ autor.nombre[0] }}
+        </div>
+        {% endif %}
+      </div>
+
+      <div>
+        <p class="text-sm font-medium" style="color: var(--text-primary);">
+          {{ autor.nombre }} {{ autor.apellidos }}
+        </p>
+        <a href="{{ url_for('cuenta.perfil_usuario', id_usuario=autor.id) }}" class="text-xs hover:underline transition"
+          style="color: #d97706;">
+          Ver perfil
+        </a>
+      </div>
+    </div>
+
+    <div class="flex gap-2">
+      <a href="{{ url_for('cuenta.perfil_usuario', id_usuario=autor.id) }}"
+        class="px-3 py-1 rounded-lg text-white text-sm hover:opacity-90 transition" style="background-color: #d97706;">
+        Ver perfil
+      </a>
+    </div>
+  </div>
+
+  <div class="w-full h-72 rounded-2xl overflow-hidden shadow-lg mb-8">
+    {% if receta.foto_principal %}
+    <img src="{{ url_for('static', filename=receta.foto_principal) }}" class="rounded-xl w-full h-full object-cover">
+    {% endif %}
+  </div>
+
+  <div class="flex items-center gap-6 text-sm mb-8" style="color: var(--text-secondary);">
+    <span class="flex items-center gap-1">⏱ {{ receta.tiempo }} min</span>
+    <span class="flex items-center gap-1">🍽 {{ receta.raciones }} porciones</span>
+    <span class="flex items-center gap-1">{{ receta.categoria }}</span>
+  </div>
+
+  <p class="leading-relaxed mb-10" style="color: var(--text-secondary);">
+    {{ receta.descripcion }}
+  </p>
+
+  <div class="mb-12">
+    <h2 class="text-xl font-semibold mb-4" style="color: var(--text-primary);">Ingredientes</h2>
+
+    <ul class="space-y-3" style="color: var(--text-secondary);">
+      {% for ing in receta.ingredientes_asociados %}
+      <li class="flex items-start gap-3">
+
+        <input type="checkbox" class="ingredient-check mt-1 h-4 w-4 rounded"
+          style="border-color: #d97706; accent-color: #d97706;">
+        <span class="ingredient-text text-sm">
+          {{ ing.ingrediente.nombre }}
+        </span>
+
+      </li>
+      {% endfor %}
+    </ul>
+  </div>
+
+  <div class="mb-12">
+    <h2 class="text-xl font-semibold mb-4" style="color: var(--text-primary);">Instrucciones</h2>
+
+    <div class="space-y-6">
+      {% for paso in receta.pasos %}
+      <div class="p-4 rounded-lg" style="background-color: var(--bg-secondary); border: 1px solid var(--border);">
+        <div class="flex gap-4">
+          <div class="w-8 h-8 flex items-center justify-center rounded-full text-white font-semibold flex-shrink-0"
+            style="background-color: #d97706;">
+            {{ paso.num_paso }}
+          </div>
+          <div class="flex-1">
+            <p class="leading-relaxed" style="color: var(--text-secondary);">
+              {{ paso.texto }}
+            </p>
+
+            <!-- Galería de fotos del paso -->
+            {% if paso.fotos and paso.fotos|length > 0 %}
+            <div class="mt-3 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+              {% for foto in paso.fotos %}
+              <div class="relative group overflow-hidden rounded-lg shadow-md">
+                <img src="{{ url_for('static', filename=foto.foto) }}"
+                  class="w-full h-48 object-cover group-hover:scale-105 transition duration-300"
+                  alt="Foto paso {{ paso.num_paso }}"
+                  onerror="this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22400%22 height=%22300%22%3E%3Crect fill=%22%23e5e7eb%22 width=%22400%22 height=%22300%22/%3E%3Ctext x=%2250%25%22 y=%2250%25%22 font-size=%2218%22 fill=%22%239ca3af%22 text-anchor=%22middle%22 dy=%22.3em%22%3EFoto no disponible%3C/text%3E%3C/svg%3E'" />
+              </div>
+              {% endfor %}
+            </div>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+
+  <a href="{{ url_for('cuenta.index') }}"
+    class="inline-block mt-6 px-5 py-2 rounded-lg text-sm font-medium hover:opacity-90 transition"
+    style="background-color: var(--bg-secondary); color: var(--text-primary); border: 1px solid var(--border);">
+    ← Volver al inicio
+  </a>
+
+</div>
+
+<script src="../../static/js/vistaRecetas.js"></script>
+<script src="{{ url_for('static', filename='vendor/js/vistaRecetas.js') }}"></script>
+
+{% endblock %}

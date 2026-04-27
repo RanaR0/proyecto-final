@@ -1,0 +1,39 @@
+{% extends "usuario/base.html" %}
+
+{% block title %}Recuperar Contraseña{% endblock %}
+
+{% block heading %}Recuperar Contraseña{% endblock %}
+
+{% block content %}
+<form method="POST" class="space-y-5">
+
+  <div>
+    <label class="block text-stone-700 text-sm font-medium mb-1">
+      Correo Electrónico
+    </label>
+    <input type="email" name="email" required
+      class="w-full px-4 py-2 border border-stone-300 rounded-lg focus:ring-2 focus:ring-amber-800 focus:outline-none"
+      placeholder="tu@email.com">
+    <p class="mt-1 text-xs text-stone-600">
+      Ingresa el email de tu cuenta
+    </p>
+  </div>
+
+  <button type="submit"
+    class="w-full bg-amber-800 text-white py-2 rounded-lg font-medium hover:bg-amber-900 transition">
+    Siguiente
+  </button>
+
+</form>
+{% endblock %}
+
+{% block footer_text %}
+¿Recordaste tu contraseña?
+<a href="{{ url_for('auth.login') }}" class="text-amber-800 font-medium hover:underline">
+  Volver a iniciar sesión
+</a>
+{% endblock %}
+
+</body>
+
+</html>

@@ -1,0 +1,46 @@
+{% extends "usuario/base.html" %}
+
+{% block title %}Iniciar sesión{% endblock %}
+
+{% block heading %}Iniciar sesión{% endblock %}
+
+{% block content %}
+<form method="POST" class="space-y-5">
+
+  <div>
+    <label class="block text-stone-700 text-sm font-medium mb-1">
+      Nombre de usuario
+    </label>
+    <input type="text" name="nombre_usuario" required
+      class="w-full px-4 py-2 border border-stone-300 rounded-lg focus:ring-2 focus:ring-amber-800 focus:outline-none"
+      placeholder="Introduce tu nombre de usuario">
+  </div>
+
+  <div>
+    <label class="block text-stone-700 text-sm font-medium mb-1">
+      Contraseña
+    </label>
+    <input type="password" name="contraseña" required
+      class="w-full px-4 py-2 border border-stone-300 rounded-lg focus:ring-2 focus:ring-amber-800 focus:outline-none"
+      placeholder="Introduce tu contraseña">
+    <div class="mt-2 text-right">
+      <a href="{{ url_for('auth.recuperar_contraseña') }}" class="text-xs text-amber-800 hover:underline font-medium">
+        ¿Olvidaste tu contraseña?
+      </a>
+    </div>
+  </div>
+
+  <button type="submit"
+    class="w-full bg-amber-800 text-white py-2 rounded-lg font-medium hover:bg-amber-900 transition">
+    Iniciar sesión
+  </button>
+
+</form>
+{% endblock %}
+
+{% block footer_text %}
+¿No tienes cuenta?
+<a href="{{ url_for('auth.registrarse') }}" class="text-amber-800 font-medium hover:underline">
+  Crear una cuenta
+</a>
+{% endblock %}

@@ -1,0 +1,166 @@
+{% extends "cuenta/base.html" %}
+
+{% block content %}
+
+<div class="max-w-2xl mx-auto px-6 py-6 md:py-10 mb-16">
+
+  <h1 class="text-3xl font-bold mb-8" style="color: var(--text-primary);">Ajustes</h1>
+
+  <div class="rounded-lg shadow-md overflow-hidden"
+    style="background-color: var(--card-bg); border: 1px solid var(--border);">
+
+    <!-- Cuenta y Privacidad -->
+    <div style="border-bottom: 1px solid var(--border);">
+      <p class="px-6 py-4 text-xs font-bold uppercase tracking-wider" style="color: var(--text-secondary);">CUENTA</p>
+
+      <a href="{{ url_for('cuenta.editar_perfil') }}" class="flex items-center justify-between px-6 py-4 transition"
+        style="border-bottom: 1px solid var(--border); cursor: pointer;"
+        onmouseover="this.style.backgroundColor='var(--bg-secondary)'"
+        onmouseout="this.style.backgroundColor='transparent'">
+        <div class="flex items-center gap-3">
+          <i class="fas fa-user text-amber-800 text-lg"></i>
+          <div>
+            <p class="font-semibold" style="color: var(--text-primary);">Editar perfil</p>
+            <p class="text-xs" style="color: var(--text-secondary);">Nombre, usuario, descripción</p>
+          </div>
+        </div>
+        <i class="fas fa-chevron-right" style="color: var(--text-secondary);"></i>
+      </a>
+
+      <div style="border-top: 1px solid var(--border);">
+        <div class="px-6 py-4">
+          <div class="flex items-center gap-3 mb-3">
+            <i class="fas fa-camera text-amber-800 text-lg"></i>
+            <div>
+              <p class="font-semibold" style="color: var(--text-primary);">Cambiar foto de perfil</p>
+              <p class="text-xs" style="color: var(--text-secondary);">Sube una nueva imagen</p>
+            </div>
+          </div>
+          <form action="{{ url_for('cuenta.subir_foto_perfil') }}" method="post" enctype="multipart/form-data">
+            <div class="flex items-center gap-4">
+              <input type="file" name="foto_perfil" accept="image/*"
+                class="flex-1 text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-amber-50 file:text-amber-700 hover:file:bg-amber-100">
+              <button type="submit"
+                class="px-4 py-2 bg-amber-800 text-white rounded-lg text-sm font-medium hover:bg-amber-900 transition">
+                Subir foto
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <a href="{{ url_for('cuenta.privacidad') }}" class="flex items-center justify-between px-6 py-4 transition"
+        style="border-top: 1px solid var(--border); cursor: pointer;"
+        onmouseover="this.style.backgroundColor='var(--bg-secondary)'"
+        onmouseout="this.style.backgroundColor='transparent'">
+        <div class="flex items-center gap-3">
+          <i class="fas fa-lock text-amber-800 text-lg"></i>
+          <div>
+            <p class="font-semibold" style="color: var(--text-primary);">Privacidad</p>
+            <p class="text-xs" style="color: var(--text-secondary);">Controla quién te sigue</p>
+          </div>
+        </div>
+        <i class="fas fa-chevron-right" style="color: var(--text-secondary);"></i>
+      </a>
+    </div>
+
+    <!-- Notificaciones -->
+    <div style="border-bottom: 1px solid var(--border);">
+      <p class="px-6 py-4 text-xs font-bold uppercase tracking-wider" style="color: var(--text-secondary);">
+        NOTIFICACIONES</p>
+
+      <a href="{{ url_for('cuenta.alertas') }}" class="flex items-center justify-between px-6 py-4 transition"
+        style="cursor: pointer;" onmouseover="this.style.backgroundColor='var(--bg-secondary)'"
+        onmouseout="this.style.backgroundColor='transparent'">
+        <div class="flex items-center gap-3">
+          <i class="fas fa-bell text-amber-800 text-lg"></i>
+          <div>
+            <p class="font-semibold" style="color: var(--text-primary);">Alertas</p>
+            <p class="text-xs" style="color: var(--text-secondary);">Notificaciones de actividad</p>
+          </div>
+        </div>
+        <i class="fas fa-chevron-right" style="color: var(--text-secondary);"></i>
+      </a>
+    </div>
+
+    <!-- Tema y Preferencias -->
+    <div style="border-bottom: 1px solid var(--border);">
+      <p class="px-6 py-4 text-xs font-bold uppercase tracking-wider" style="color: var(--text-secondary);">PREFERENCIAS
+      </p>
+
+      <div class="flex items-center justify-between px-6 py-4" style="border-bottom: 1px solid var(--border);">
+        <div class="flex items-center gap-3">
+          <i class="fas fa-palette text-amber-800 text-lg"></i>
+          <div>
+            <p class="font-semibold" style="color: var(--text-primary);">Modo Oscuro</p>
+            <p class="text-xs" style="color: var(--text-secondary);">Cambiar entre modo claro y oscuro</p>
+          </div>
+        </div>
+        <label class="switch">
+          <input type="checkbox" id="theme-toggle" onchange="toggleTheme()">
+          <span class="slider"></span>
+        </label>
+      </div>
+
+      <div class="border-t">
+        <a href="{{ url_for('cuenta.configurar_smtp') }}" class="flex items-center justify-between px-6 py-4 transition"
+          style="border-top: 1px solid var(--border); cursor: pointer;"
+          onmouseover="this.style.backgroundColor='var(--bg-secondary)'"
+          onmouseout="this.style.backgroundColor='transparent'">
+          <div class="flex items-center gap-3">
+            <i class="fas fa-envelope text-amber-800 text-lg"></i>
+            <div>
+              <p class="font-semibold" style="color: var(--text-primary);">SMTP</p>
+              <p class="text-xs" style="color: var(--text-secondary);">Configura el envío de emails</p>
+            </div>
+          </div>
+          <i class="fas fa-chevron-right" style="color: var(--text-secondary);"></i>
+        </a>
+      </div>
+    </div>
+    <!-- <i class="fas fa-chevron-right text-gray-400"></i> -->
+    </a>
+
+    <div class="border-t">
+      <details class="group">
+        <summary class="flex items-center justify-between px-6 py-4 transition cursor-pointer list-none"
+          style="border-bottom: 1px solid var(--border);" onmouseover="this.style.backgroundColor='var(--bg-secondary)'"
+          onmouseout="this.style.backgroundColor='transparent'">
+          <div class="flex items-center gap-3">
+            <i class="fas fa-info-circle text-amber-800 text-lg"></i>
+            <div>
+              <p class="font-semibold" style="color: var(--text-primary);">Acerca de</p>
+              <p class="text-xs" style="color: var(--text-secondary);">Versión y más información</p>
+            </div>
+          </div>
+          <i class="fas fa-chevron-right group-open:rotate-90 transition" style="color: var(--text-secondary);"></i>
+        </summary>
+        <div class="px-6 py-4 border-t" style="background-color: var(--bg-secondary); border-color: var(--border);">
+          <p class="text-sm" style="color: var(--text-primary);">
+            <strong>Mi Recetario v1.0.0</strong><br>
+            Una aplicación web para compartir y descubrir recetas deliciosas. Desarrollada con Flask, SQLAlchemy y
+            Tailwind CSS.
+          </p>
+        </div>
+      </details>
+    </div>
+  </div>
+
+  <!-- Cerrar Sesión -->
+  <div class="pt-6 pb-4 px-6">
+    <a href="{{ url_for('auth.logout') }}"
+      class="block w-full px-6 py-3 bg-red-600 text-white font-semibold rounded-lg hover:bg-red-700 transition text-center">
+      Cerrar sesión
+    </a>
+  </div>
+
+</div>
+
+<!-- Versión -->
+<div class="text-center mt-8">
+  <p class="text-xs" style="color: var(--text-secondary);">Mi Recetario v1.0.0</p>
+</div>
+
+</div>
+
+{% endblock %}

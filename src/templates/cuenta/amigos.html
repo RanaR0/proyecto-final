@@ -1,0 +1,118 @@
+{% extends "cuenta/base.html" %}
+
+{% block content %}
+
+<div class="max-w-4xl mx-auto px-6 py-6 md:py-10 mb-16">
+
+  <h1 class="text-3xl font-bold text-stone-800 mb-8">Amigos</h1>
+
+  <!-- Solicitudes de amistad pendientes -->
+  {% if solicitudes %}
+  <div class="mb-10">
+    <h2 class="text-xl font-semibold text-stone-800 mb-6">Solicitudes pendientes</h2>
+
+    <div class="space-y-4">
+      {% for solicitud_item in solicitudes %}
+      <div class="bg-white rounded-lg shadow-md border border-gray-200 p-6 flex items-center justify-between">
+        <div class="flex items-center gap-4 flex-1">
+          <div class="w-16 h-16 rounded-full bg-stone-300 overflow-hidden flex-shrink-0">
+            {% if solicitud_item.usuario.foto %}
+            <img src="{{ url_for('static', filename=solicitud_item.usuario.foto) }}" class="w-full h-full object-cover">
+            {% else %}
+            <div class="w-full h-full flex items-center justify-center text-2xl text-stone-600">
+              {{ solicitud_item.usuario.nombre[0] }}
+            </div>
+            {% endif %}
+          </div>
+
+          <div class="flex-1">
+            <h3 class="font-semibold text-stone-900">
+              {{ solicitud_item.usuario.usuario }}
+            </h3>
+            <p class="text-sm text-stone-600">
+              {{ solicitud_item.usuario.nombre }} {{ solicitud_item.usuario.apellidos }}
+            </p>
+          </div>
+        </div>
+
+        <div class="flex gap-3">
+          <form action="{{ url_for('cuenta.aceptar_amistad', id_solicitud=solicitud_item.id) }}" method="POST"
+            style="display: inline;">
+            <button type="submit"
+              class="px-4 py-2 rounded-lg bg-amber-800 text-white text-sm hover:bg-amber-900 transition">
+              Aceptar
+            </button>
+          </form>
+          <form action="{{ url_for('cuenta.rechazar_amistad', id_solicitud=solicitud_item.id) }}" method="POST"
+            style="display: inline;">
+            <button type="submit"
+              class="px-4 py-2 rounded-lg bg-gray-300 text-gray-800 text-sm hover:bg-gray-400 transition">
+              Rechazar
+            </button>
+          </form>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+  {% endif %}
+
+  <!-- Lista de amigos -->
+  <div>
+    <h2 class="text-xl font-semibold text-stone-800 mb-6">
+      Mis amigos ({{ amigos|length }})
+    </h2>
+
+    {% if amigos %}
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+      {% for amigo in amigos %}
+      <div class="bg-white rounded-lg shadow-md border border-gray-200 overflow-hidden hover:shadow-lg transition">
+        <div class="p-6 flex flex-col items-center text-center">
+          <div class="w-20 h-20 rounded-full bg-stone-300 overflow-hidden mb-4">
+            {% if amigo.foto %}
+            <img src="{{ url_for('static', filename=amigo.foto) }}" class="w-full h-full object-cover">
+            {% else %}
+            <div class="w-full h-full flex items-center justify-center text-2xl text-stone-600">
+              {{ amigo.nombre[0] }}
+            </div>
+            {% endif %}
+          </div>
+
+          <h3 class="text-lg font-semibold text-stone-900">
+            {{ amigo.usuario }}
+          </h3>
+          <p class="text-sm text-stone-600 mt-1">
+            {{ amigo.nombre }} {{ amigo.apellidos }}
+          </p>
+          <p class="text-xs text-stone-500 mt-2 line-clamp-2">
+            {{ amigo.descripcion or "Sin descripción" }}
+          </p>
+
+          <div class="flex gap-3 mt-4 w-full">
+            <a href="{{ url_for('cuenta.perfil_usuario', id_usuario=amigo.id) }}"
+              class="flex-1 text-center bg-amber-800 text-white py-2 rounded-lg text-sm font-medium hover:bg-amber-900 transition">
+              Ver perfil
+            </a>
+            <form action="{{ url_for('cuenta.eliminar_amigo', id_amigo=amigo.id) }}" method="POST"
+              style="display: inline; flex-grow: 1;">
+              <button type="submit"
+                class="w-full bg-red-600 text-white py-2 rounded-lg text-sm font-medium hover:bg-red-700 transition">
+                Eliminar
+              </button>
+            </form>
+          </div>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+    {% else %}
+    <div class="text-center py-12 bg-gray-50 rounded-lg">
+      <i class="fas fa-user-friends text-4xl text-gray-300 mb-4"></i>
+      <p class="text-gray-600">Aún no tienes amigos. ¡Comienza a enviar solicitudes!</p>
+    </div>
+    {% endif %}
+  </div>
+
+</div>
+
+{% endblock %}

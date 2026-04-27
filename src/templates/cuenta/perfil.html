@@ -1,0 +1,255 @@
+{% extends "cuenta/base.html" %}
+
+{% block content %}
+
+<div class="max-w-5xl mx-auto px-6 py-10">
+
+  <div class="flex items-center gap-6 mb-10">
+
+    <div class="w-28 h-28 rounded-full overflow-hidden" style="background-color: var(--bg-secondary);">
+      {% if usuario.foto %}
+      <img src="{{ url_for('static', filename=usuario.foto) }}" class="w-full h-full object-cover">
+      {% else %}
+      <div class="w-full h-full flex items-center justify-center text-3xl" style="color: var(--text-secondary);">
+        {{ usuario.nombre[0] }}
+      </div>
+      {% endif %}
+    </div>
+
+    <div class="flex-1">
+
+      <div class="flex items-center gap-4">
+        <h1 class="text-2xl font-semibold" style="color: var(--text-primary);">
+          {{ usuario.usuario }}
+        </h1>
+
+        <button onclick="window.location.href='{{ url_for('cuenta.ajustes') }}'"
+          class="px-3 py-1 rounded-lg text-sm transition hover:opacity-90" title="Ajustes"
+          style="background-color: var(--bg-secondary); color: var(--text-primary); border: 1px solid var(--border); cursor: pointer;">
+          <i class="fas fa-cog"></i>
+        </button>
+      </div>
+
+      <div class="flex gap-6 mt-2" style="color: var(--text-primary);">
+        <span><strong>{{ recetas|length }}</strong> recetas</span>
+        <span><strong>{{ seguidores }}</strong> seguidores</span>
+        <span><strong>{{ seguidos }}</strong> seguidos</span>
+        <span><strong>{{ total_likes }}</strong> likes totales</span>
+      </div>
+
+      <p class="mt-3" style="color: var(--text-secondary);">
+        {{ usuario.descripcion or "Este usuario aún no ha escrito una biografía." }}
+      </p>
+
+    </div>
+  </div>
+
+  <!-- Mini nav para cambiar entre vistas -->
+  <div class="flex gap-6 mb-8" style="border-bottom: 1px solid var(--border);">
+    <button onclick="mostrarTab('publicadas')" id="tab-publicadas" class="px-4 py-3 font-medium transition"
+      style="color: #d97706; border-bottom: 2px solid #d97706;">
+      Publicadas
+    </button>
+    <button onclick="mostrarTab('likes')" id="tab-likes" class="px-4 py-3 font-medium transition"
+      style="color: var(--text-secondary); border-bottom: 2px solid transparent;"
+      onmouseover="this.style.color='var(--text-primary)'" onmouseout="this.style.color='var(--text-secondary)'">
+      Likes
+    </button>
+    <button onclick="mostrarTab('seguidos')" id="tab-seguidos" class="px-4 py-3 font-medium transition"
+      style="color: var(--text-secondary); border-bottom: 2px solid transparent;"
+      onmouseover="this.style.color='var(--text-primary)'" onmouseout="this.style.color='var(--text-secondary)'">
+      Seguidos
+    </button>
+  </div>
+
+  <!-- Sección Publicadas -->
+  <div id="tab-publicadas-content" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-10">
+    {% if recetas %}
+    {% for r in recetas %}
+    <div class="rounded-2xl shadow-lg overflow-hidden hover:shadow-xl transition"
+      style="background-color: var(--card-bg); border: 1px solid var(--border);">
+
+      <div class="h-52 w-full overflow-hidden bg-stone-200" style="background-color: var(--bg-secondary);">
+        {% if r.foto %}
+        <img src="{{ url_for('static', filename=r.foto) }}"
+          class="w-full h-full object-cover hover:scale-105 transition duration-300">
+        {% else %}
+        <div class="w-full h-full flex items-center justify-center"
+          style="background: linear-gradient(to bottom right, var(--bg-secondary), var(--bg-primary));">
+          <i class="fas fa-utensils text-4xl" style="color: var(--text-secondary);"></i>
+        </div>
+        {% endif %}
+      </div>
+
+      <div class="p-6 space-y-3">
+
+        <h3 class="text-lg font-semibold leading-tight" style="color: var(--text-primary);">
+          {{ r.nombre }}
+        </h3>
+
+        <span class="inline-block text-xs font-medium px-3 py-1 rounded-full"
+          style="background-color: rgba(217, 119, 6, 0.2); color: #d97706;">
+          {{ r.categoria }}
+        </span>
+
+        <p class="text-sm line-clamp-2" style="color: var(--text-secondary);">
+          {{ r.descripcion }}
+        </p>
+
+        <div class="flex items-center justify-between text-sm pt-2" style="color: var(--text-primary);">
+          <span>⏱ {{ r.tiempo }} min</span>
+          <span>🍽 {{ r.raciones }}</span>
+        </div>
+
+        <div class="flex items-center gap-2 text-sm" style="color: var(--text-primary);">
+          ❤️ {{ r.likes }}
+        </div>
+
+        <a href="{{ url_for('cuenta.ver_receta', id=r.id) }}"
+          class="block text-center w-full mt-3 text-white py-2 rounded-lg text-sm font-medium transition hover:opacity-90"
+          style="background-color: #d97706;">
+          Ver receta
+        </a>
+        <a href="{{ url_for('crear.editar_receta', id=r.id) }}"
+          class="block text-center w-full text-white py-2 rounded-lg text-sm font-medium transition hover:opacity-90"
+          style="background-color: #0ea5e9;">
+          Editar
+        </a>
+        <form action="{{ url_for('cuenta.borrar_receta', id_receta=r.id) }}" method="POST"
+          onsubmit="return confirm('¿Seguro que quieres borrar esta receta?');">
+          <button class="w-full text-white py-2 rounded-lg text-sm font-medium transition hover:opacity-90"
+            style="background-color: #dc2626;">
+            Borrar receta
+          </button>
+        </form>
+
+      </div>
+    </div>
+    {% endfor %}
+    {% else %}
+    <div class="col-span-full text-center py-12 rounded-lg" style="background-color: var(--bg-secondary);">
+      <i class="fas fa-utensils text-4xl mb-4" style="color: var(--text-secondary);"></i>
+      <p style="color: var(--text-secondary);">Aún no has publicado ninguna receta.</p>
+    </div>
+    {% endif %}
+  </div>
+
+  <!-- Sección Likes -->
+  <div id="tab-likes-content" class="hidden">
+    {% if recetas_likes %}
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-10">
+      {% for r in recetas_likes %}
+      <div class="rounded-2xl shadow-lg overflow-hidden hover:shadow-xl transition"
+        style="background-color: var(--card-bg); border: 1px solid var(--border);">
+        <div class="h-52 w-full overflow-hidden bg-stone-200" style="background-color: var(--bg-secondary);">
+          {% if r.foto %}
+          <img src="{{ url_for('static', filename=r.foto) }}"
+            class="w-full h-full object-cover hover:scale-105 transition duration-300">
+          {% else %}
+          <div class="w-full h-full flex items-center justify-center"
+            style="background: linear-gradient(to bottom right, var(--bg-secondary), var(--bg-primary));">
+            <i class="fas fa-utensils text-4xl" style="color: var(--text-secondary);"></i>
+          </div>
+          {% endif %}
+        </div>
+        <div class="p-6 space-y-3">
+          <h3 class="text-lg font-semibold leading-tight" style="color: var(--text-primary);">
+            {{ r.nombre }}
+          </h3>
+          <span class="inline-block text-xs font-medium px-3 py-1 rounded-full"
+            style="background-color: rgba(217, 119, 6, 0.2); color: #d97706;">
+            {{ r.categoria }}
+          </span>
+          <p class="text-sm line-clamp-2" style="color: var(--text-secondary);">
+            {{ r.descripcion }}
+          </p>
+          <div class="flex items-center justify-between text-sm pt-2" style="color: var(--text-primary);">
+            <span>⏱ {{ r.tiempo }} min</span>
+            <span>🍽 {{ r.raciones }}</span>
+          </div>
+          <div class="flex items-center gap-2 text-sm" style="color: var(--text-secondary);">
+            Por: {{ r.autor }}
+          </div>
+          <a href="{{ url_for('cuenta.ver_receta', id=r.id) }}"
+            class="block text-center w-full mt-3 text-white py-2 rounded-lg text-sm font-medium transition hover:opacity-90"
+            style="background-color: #d97706;">
+            Ver receta
+          </a>
+          <a href="{{ url_for('crear.copiar_receta', id=r.id) }}"
+            class="block text-center w-full text-white py-2 rounded-lg text-sm font-medium transition hover:opacity-90"
+            style="background-color: #10b981;">
+            Copiar receta
+          </a>
+          <form action="{{ url_for('cuenta.toggle_favorito', id_receta=r.id) }}" method="POST" style="display: inline;">
+            <button class="w-full text-white py-2 rounded-lg text-sm font-medium transition hover:opacity-90"
+              style="background-color: #dc2626;">
+              Eliminar de likes
+            </button>
+          </form>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+    {% else %}
+    <div class="text-center py-12 rounded-lg" style="background-color: var(--bg-secondary);">
+      <i class="fas fa-heart text-4xl mb-4" style="color: var(--text-secondary);"></i>
+      <p style="color: var(--text-secondary);">Aún no has marcado recetas como favoritas.</p>
+    </div>
+    {% endif %}
+  </div>
+
+  <!-- Sección Seguidos -->
+  <div id="tab-seguidos-content" class="hidden">
+    {% if usuarios_seguidos %}
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+      {% for usuario_seg in usuarios_seguidos %}
+      <div class="rounded-2xl shadow-lg overflow-hidden hover:shadow-xl transition"
+        style="background-color: var(--card-bg); border: 1px solid var(--border);">
+        <div class="p-6 flex flex-col items-center text-center">
+          <div class="w-20 h-20 rounded-full overflow-hidden mb-4" style="background-color: var(--bg-secondary);">
+            {% if usuario_seg.foto %}
+            <img src="{{ url_for('static', filename=usuario_seg.foto) }}" class="w-full h-full object-cover">
+            {% else %}
+            <div class="w-full h-full flex items-center justify-center text-2xl" style="color: var(--text-secondary);">
+              {{ usuario_seg.nombre[0] }}
+            </div>
+            {% endif %}
+          </div>
+          <h3 class="text-lg font-semibold" style="color: var(--text-primary);">
+            {{ usuario_seg.usuario }}
+          </h3>
+          <p class="text-sm mt-1" style="color: var(--text-secondary);">
+            {{ usuario_seg.nombre }} {{ usuario_seg.apellidos }}
+          </p>
+          <p class="text-xs mt-2 line-clamp-2" style="color: var(--text-secondary);">
+            {{ usuario_seg.descripcion or "Sin descripción" }}
+          </p>
+          <a href="{{ url_for('cuenta.perfil_usuario', id_usuario=usuario_seg.id) }}"
+            class="block text-center w-full mt-4 text-white py-2 rounded-lg text-sm font-medium transition hover:opacity-90"
+            style="background-color: #d97706;">
+            Ver perfil
+          </a>
+          <form action="{{ url_for('cuenta.dejar_seguir', id_usuario=usuario_seg.id) }}" method="POST"
+            style="display: inline;">
+            <button class="w-full py-2 rounded-lg text-sm font-medium transition hover:opacity-90 mt-2"
+              style="background-color: var(--bg-secondary); color: var(--text-primary); border: 1px solid var(--border);">
+              Dejar de seguir
+            </button>
+          </form>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+    {% else %}
+    <div class="text-center py-12 rounded-lg" style="background-color: var(--bg-secondary);">
+      <i class="fas fa-users text-4xl mb-4" style="color: var(--text-secondary);"></i>
+      <p style="color: var(--text-secondary);">Aún no sigues a ningún usuario.</p>
+    </div>
+    {% endif %}
+  </div>
+
+</div>
+
+<script src="{{ url_for('static', filename='js/perfil.js') }}"></script>
+
+{% endblock %}

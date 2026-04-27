@@ -1,0 +1,24 @@
+# Pasos para ejecutar la aplicación correctamente:
+#
+# 1. Asegúrate de tener Python 3.8 o superior instalado.
+#
+# 2. Crea un entorno virtual (opcional pero recomendado):
+#    python -m venv .venv
+#
+# 3. Activa el entorno virtual:
+#    - En Windows: .venv\Scripts\activate
+#    - En Linux/Mac: source .venv/bin/activate
+#
+# 4. Instala las dependencias:
+#    pip install -r requirements.txt
+#
+# 5. Ejecuta la aplicación:
+#    python src/app.py
+#
+# 6. Abre tu navegador y ve a http://localhost:5000
+#
+# La base de datos SQLite se creará automáticamente en instance/cocina.db
+# Las carpetas necesarias (static/uploads/users) se crearán si no existen.
+
+Flask==2.3.3
+Flask-SQLAlchemy==3.0.5

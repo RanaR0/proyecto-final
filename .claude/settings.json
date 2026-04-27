@@ -1,0 +1,10 @@
+{
+  "permissions": {
+    "allow": [
+      "Read(//c/Users/Usuario/.claude/plugins/cache/ui-ux-pro-max-skill/ui-ux-pro-max/2.5.0/.claude/skills/ui-ux-pro-max/**)",
+      "Read(//c/Users/Usuario/.claude/plugins/cache/ui-ux-pro-max-skill/**)",
+      "Bash(python \"C:/Users/Usuario/.claude/plugins/cache/ui-ux-pro-max-skill/ui-ux-pro-max/2.5.0/src/ui-ux-pro-max/scripts/search.py\" \"recipe cooking food warm artisan\" --design-system -p \"TFG Recetas\" -f markdown)",
+      "Bash(python \"C:/Users/Usuario/.claude/plugins/cache/ui-ux-pro-max-skill/ui-ux-pro-max/2.5.0/src/ui-ux-pro-max/scripts/search.py\" \"warm artisan editorial food magazine\" --domain style -n 3)"
+    ]
+  }
+}

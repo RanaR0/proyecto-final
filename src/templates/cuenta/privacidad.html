@@ -1,0 +1,189 @@
+{% extends "cuenta/base.html" %}
+
+{% block content %}
+
+<div class="max-w-2xl mx-auto px-6 py-6 md:py-10 mb-16">
+
+  <div class="flex items-center gap-4 mb-8">
+    <a href="{{ url_for('cuenta.ajustes') }}" class="text-gray-500 hover:text-gray-700">
+      <i class="fas fa-arrow-left text-lg"></i>
+    </a>
+    <h1 class="text-3xl font-bold text-stone-800">Privacidad</h1>
+  </div>
+
+  <div class="bg-white rounded-lg shadow-md border border-gray-200 overflow-hidden">
+
+    <!-- Descripción -->
+    <div class="px-6 py-6 border-b bg-gray-50">
+      <p class="text-sm text-gray-700">
+        Controla quién puede ver tu perfil, recetas y actividad. Los ajustes de privacidad afectan tanto a seguidos como
+        a seguidores.
+      </p>
+    </div>
+
+    <!-- Estado de la cuenta -->
+    <div class="px-6 py-6 border-b">
+      <div class="flex items-center justify-between">
+        <div>
+          <p class="font-semibold text-gray-800">Cuenta privada</p>
+          <p class="text-sm text-gray-500 mt-1">Solo los usuarios que sigues pueden ver tus recetas y actividad</p>
+        </div>
+        <label class="switch">
+          <input type="checkbox" id="cuenta-privada" checked disabled>
+          <span class="slider"></span>
+        </label>
+      </div>
+      <p class="text-xs text-amber-700 mt-3 bg-amber-50 rounded p-2">
+        <i class="fas fa-info-circle mr-2"></i>
+        Actualmente tu cuenta está configurada como privada
+      </p>
+    </div>
+
+    <!-- Quién puede seguirte -->
+    <div class="px-6 py-6 border-b">
+      <p class="font-semibold text-gray-800 mb-4">Quién puede seguirte</p>
+
+      <div class="space-y-3">
+        <label class="flex items-center gap-3 cursor-pointer hover:bg-gray-50 p-3 rounded transition">
+          <input type="radio" name="seguir" value="todos" checked class="w-4 h-4">
+          <div>
+            <p class="font-medium text-gray-800">Cualquiera</p>
+            <p class="text-sm text-gray-500">Cualquier usuario puede enviarte solicitud de seguimiento</p>
+          </div>
+        </label>
+
+        <label class="flex items-center gap-3 cursor-pointer hover:bg-gray-50 p-3 rounded transition">
+          <input type="radio" name="seguir" value="amigos" class="w-4 h-4">
+          <div>
+            <p class="font-medium text-gray-800">Solo amigos</p>
+            <p class="text-sm text-gray-500">Solo usuarios que ya sigues pueden seguirte</p>
+          </div>
+        </label>
+      </div>
+    </div>
+
+    <!-- Quién puede ver tus recetas -->
+    <div class="px-6 py-6 border-b">
+      <p class="font-semibold text-gray-800 mb-4">Quién puede ver tus recetas</p>
+
+      <div class="space-y-3">
+        <label class="flex items-center gap-3 cursor-pointer hover:bg-gray-50 p-3 rounded transition">
+          <input type="radio" name="ver-recetas" value="seguidores" checked class="w-4 h-4">
+          <div>
+            <p class="font-medium text-gray-800">Mis seguidores</p>
+            <p class="text-sm text-gray-500">Solo los usuarios que te siguen pueden ver tus recetas</p>
+          </div>
+        </label>
+
+        <label class="flex items-center gap-3 cursor-pointer hover:bg-gray-50 p-3 rounded transition">
+          <input type="radio" name="ver-recetas" value="privado" class="w-4 h-4">
+          <div>
+            <p class="font-medium text-gray-800">Privado</p>
+            <p class="text-sm text-gray-500">Nadie más puede ver tus recetas (excepto tú)</p>
+          </div>
+        </label>
+      </div>
+    </div>
+
+    <!-- Quién puede comentar -->
+    <div class="px-6 py-6">
+      <p class="font-semibold text-gray-800 mb-4">Quién puede interactuar</p>
+
+      <div class="space-y-3">
+        <label class="flex items-center gap-3 cursor-pointer hover:bg-gray-50 p-3 rounded transition">
+          <input type="radio" name="interactuar" value="todos" checked class="w-4 h-4">
+          <div>
+            <p class="font-medium text-gray-800">Cualquiera</p>
+            <p class="text-sm text-gray-500">Cualquier usuario puede marcar tus recetas como favoritas</p>
+          </div>
+        </label>
+
+        <label class="flex items-center gap-3 cursor-pointer hover:bg-gray-50 p-3 rounded transition">
+          <input type="radio" name="interactuar" value="seguidores" class="w-4 h-4">
+          <div>
+            <p class="font-medium text-gray-800">Solo seguidores</p>
+            <p class="text-sm text-gray-500">Solo tus seguidores pueden marcar tus recetas como favoritas</p>
+          </div>
+        </label>
+      </div>
+    </div>
+
+    <!-- Quién puede ver tus likes -->
+    <div class="px-6 py-6 border-b">
+      <p class="font-semibold text-gray-800 mb-4">Quién puede ver tus likes</p>
+
+      <div class="space-y-3">
+        <label class="flex items-center gap-3 cursor-pointer hover:bg-gray-50 p-3 rounded transition">
+          <input type="radio" name="ver-likes" value="todos" checked class="w-4 h-4">
+          <div>
+            <p class="font-medium text-gray-800">Cualquiera</p>
+            <p class="text-sm text-gray-500">Cualquier usuario puede ver las recetas que marcaste como favoritas</p>
+          </div>
+        </label>
+
+        <label class="flex items-center gap-3 cursor-pointer hover:bg-gray-50 p-3 rounded transition">
+          <input type="radio" name="ver-likes" value="amigos" class="w-4 h-4">
+          <div>
+            <p class="font-medium text-gray-800">Solo amigos</p>
+            <p class="text-sm text-gray-500">Solo tus amigos pueden ver tus likes</p>
+          </div>
+        </label>
+
+        <label class="flex items-center gap-3 cursor-pointer hover:bg-gray-50 p-3 rounded transition">
+          <input type="radio" name="ver-likes" value="privado" class="w-4 h-4">
+          <div>
+            <p class="font-medium text-gray-800">Privado</p>
+            <p class="text-sm text-gray-500">Nadie puede ver los likes que diste (solo tú)</p>
+          </div>
+        </label>
+      </div>
+    </div>
+
+    <!-- Quién puede ver tus seguidores -->
+    <div class="px-6 py-6">
+      <p class="font-semibold text-gray-800 mb-4">Quién puede ver tus seguidores</p>
+
+      <div class="space-y-3">
+        <label class="flex items-center gap-3 cursor-pointer hover:bg-gray-50 p-3 rounded transition">
+          <input type="radio" name="ver-seguidores" value="todos" checked class="w-4 h-4">
+          <div>
+            <p class="font-medium text-gray-800">Cualquiera</p>
+            <p class="text-sm text-gray-500">Cualquier usuario puede ver quién te sigue</p>
+          </div>
+        </label>
+
+        <label class="flex items-center gap-3 cursor-pointer hover:bg-gray-50 p-3 rounded transition">
+          <input type="radio" name="ver-seguidores" value="amigos" class="w-4 h-4">
+          <div>
+            <p class="font-medium text-gray-800">Solo amigos</p>
+            <p class="text-sm text-gray-500">Solo tus amigos pueden ver tu lista de seguidores</p>
+          </div>
+        </label>
+
+        <label class="flex items-center gap-3 cursor-pointer hover:bg-gray-50 p-3 rounded transition">
+          <input type="radio" name="ver-seguidores" value="privado" class="w-4 h-4">
+          <div>
+            <p class="font-medium text-gray-800">Privado</p>
+            <p class="text-sm text-gray-500">Nadie puede ver quién te sigue (solo tú)</p>
+          </div>
+        </label>
+      </div>
+    </div>
+
+    <!-- Botones de acción -->
+    <div class="flex gap-4 mt-6 pb-4">
+      <button onclick="guardarPrivacidad()"
+        class="flex-1 px-6 py-3 bg-amber-800 text-white font-semibold rounded-lg hover:bg-amber-900 transition">
+        Guardar cambios
+      </button>
+      <a href="{{ url_for('cuenta.ajustes') }}"
+        class="flex-1 px-6 py-3 bg-gray-200 text-gray-800 font-semibold rounded-lg hover:bg-gray-300 transition text-center">
+        Cancelar
+      </a>
+    </div>
+
+  </div>
+
+  <script src="{{ url_for('static', filename='js/privacidad.js') }}"></script>
+
+  {% endblock %}

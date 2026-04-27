@@ -1,0 +1,176 @@
+{% extends "cuenta/base.html" %}
+
+{% block content %}
+
+<div class="max-w-5xl mx-auto px-6 py-6 md:py-10">
+
+  <div class="flex items-center gap-6 mb-10">
+
+    <div class="w-28 h-28 rounded-full bg-stone-300 overflow-hidden">
+      {% if usuario.foto %}
+      <img src="{{ url_for('static', filename=usuario.foto) }}" class="w-full h-full object-cover">
+      {% else %}
+      <div class="w-full h-full flex items-center justify-center text-3xl text-stone-600">
+        {{ usuario.nombre[0] }}
+      </div>
+      {% endif %}
+    </div>
+
+    <div class="flex-1">
+
+      <div class="flex items-center gap-4 flex-wrap">
+        <h1 class="text-2xl font-semibold text-stone-800">
+          {{ usuario.usuario }}
+        </h1>
+
+        <!-- Botones de acción -->
+        {% if not es_amigo %}
+        {% if solicitud_pendiente %}
+        <!-- El usuario actual envió solicitud -->
+        {% if solicitud_pendiente.id_remitente == usuario_actual.id %}
+        <button onclick="cancelarSolicitud({{ solicitud_pendiente.id }})"
+          class="px-4 py-2 rounded-lg bg-gray-400 text-white text-sm hover:bg-gray-500 transition">
+          Solicitud enviada
+        </button>
+        <!-- El usuario actual recibió solicitud -->
+        {% else %}
+        <form action="{{ url_for('cuenta.aceptar_amistad', id_solicitud=solicitud_pendiente.id) }}" method="POST"
+          style="display: inline;">
+          <button type="submit"
+            class="px-4 py-2 rounded-lg bg-amber-800 text-white text-sm hover:bg-amber-900 transition">
+            Aceptar solicitud
+          </button>
+        </form>
+        <form action="{{ url_for('cuenta.rechazar_amistad', id_solicitud=solicitud_pendiente.id) }}" method="POST"
+          style="display: inline;">
+          <button type="submit"
+            class="px-4 py-2 rounded-lg bg-gray-300 text-gray-800 text-sm hover:bg-gray-400 transition">
+            Rechazar
+          </button>
+        </form>
+        {% endif %}
+        {% else %}
+        <!-- Sin solicitud pendiente, mostrar botón de enviar solicitud -->
+        <form action="{{ url_for('cuenta.solicitar_amistad', id_usuario=usuario.id) }}" method="POST"
+          style="display: inline;">
+          <button type="submit"
+            class="px-4 py-2 rounded-lg bg-amber-800 text-white text-sm hover:bg-amber-900 transition">
+            Enviar solicitud de amistad
+          </button>
+        </form>
+        {% endif %}
+        {% else %}
+        <!-- Ya son amigos -->
+        <form action="{{ url_for('cuenta.eliminar_amigo', id_amigo=usuario.id) }}" method="POST"
+          style="display: inline;">
+          <button type="submit" class="px-4 py-2 rounded-lg bg-red-600 text-white text-sm hover:bg-red-700 transition">
+            Eliminar amigo
+          </button>
+        </form>
+        {% endif %}
+
+        <!-- Botón de seguir/dejar de seguir -->
+        {% if sigo %}
+        <form action="{{ url_for('cuenta.dejar_seguir', id_usuario=usuario.id) }}" method="POST"
+          style="display: inline;">
+          <button type="submit"
+            class="px-4 py-2 rounded-lg bg-gray-300 text-gray-800 text-sm hover:bg-gray-400 transition">
+            Dejar de seguir
+          </button>
+        </form>
+        {% else %}
+        <form action="{{ url_for('cuenta.seguir', id_usuario=usuario.id) }}" method="POST" style="display: inline;">
+          <button type="submit"
+            class="px-4 py-2 rounded-lg bg-blue-600 text-white text-sm hover:bg-blue-700 transition">
+            Seguir
+          </button>
+        </form>
+        {% endif %}
+      </div>
+
+      <div class="flex gap-6 mt-4 text-stone-700">
+        <span><strong>{{ recetas|length }}</strong> recetas</span>
+        <span><strong>{{ seguidores }}</strong> seguidores</span>
+        <span><strong>{{ seguidos }}</strong> seguidos</span>
+        <span><strong>{{ total_likes }}</strong> likes totales</span>
+      </div>
+
+      <p class="mt-3 text-stone-600">
+        {{ usuario.descripcion or "Este usuario aún no ha escrito una biografía." }}
+      </p>
+
+    </div>
+  </div>
+
+  <!-- Recetas del usuario -->
+  {% if recetas %}
+  <div>
+    <h2 class="text-2xl font-semibold text-stone-800 mb-6">Recetas de {{ usuario.nombre }}</h2>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      {% for receta in recetas %}
+      <div
+        class="group rounded-xl overflow-hidden bg-white border border-gray-200 hover:shadow-lg transition flex flex-col">
+        <div class="w-full h-48 bg-gray-200 overflow-hidden">
+          {% if receta.foto %}
+          <img src="{{ url_for('static', filename=receta.foto) }}"
+            class="w-full h-full object-cover group-hover:scale-105 transition" alt="{{ receta.nombre }}">
+          {% else %}
+          <div
+            class="w-full h-full flex items-center justify-center bg-gradient-to-br from-stone-200 to-stone-300 text-stone-500">
+            <i class="fas fa-image text-4xl"></i>
+          </div>
+          {% endif %}
+        </div>
+
+        <div class="p-4 flex flex-col flex-1">
+          <h3 class="font-semibold text-stone-800 group-hover:text-amber-800 transition">
+            {{ receta.nombre }}
+          </h3>
+
+          <p class="text-xs text-stone-500 mt-1">{{ receta.categoria }}</p>
+
+          <p class="text-sm text-stone-600 mt-2 line-clamp-2">
+            {{ receta.descripcion }}
+          </p>
+
+          <div class="flex items-center justify-between mt-4 text-sm text-stone-600">
+            <span><i class="fas fa-clock mr-1"></i>{{ receta.tiempo }} min</span>
+            <span><i class="fas fa-heart text-red-500 mr-1"></i>{{ receta.likes }}</span>
+          </div>
+
+          <div class="flex flex-col gap-2 mt-4">
+            <a href="{{ url_for('cuenta.ver_receta', id=receta.id) }}"
+              class="block text-center w-full text-white py-2 rounded-lg text-sm font-medium transition hover:opacity-90"
+              style="background-color: #d97706;">
+              Ver receta
+            </a>
+            <a href="{{ url_for('crear.copiar_receta', id=receta.id) }}"
+              class="block text-center w-full text-white py-2 rounded-lg text-sm font-medium transition hover:opacity-90"
+              style="background-color: #10b981;">
+              Copiar receta
+            </a>
+          </div>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+  {% else %}
+  <div class="text-center py-12 bg-gray-50 rounded-lg">
+    <i class="fas fa-inbox text-4xl text-gray-300 mb-4"></i>
+    <p class="text-gray-600">Este usuario aún no ha compartido recetas.</p>
+  </div>
+  {% endif %}
+
+  <!-- Volver -->
+  <div class="mt-8">
+    <a href="{{ request.referrer or url_for('cuenta.index') }}"
+      class="inline-block px-5 py-2 bg-stone-200 text-stone-800 rounded-lg text-sm font-medium hover:bg-stone-300 transition">
+      ← Volver
+    </a>
+  </div>
+
+</div>
+
+{% endblock %}

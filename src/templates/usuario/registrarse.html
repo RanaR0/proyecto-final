@@ -1,0 +1,76 @@
+{% extends "usuario/base.html" %}
+
+{% block title %}Crear cuenta{% endblock %}
+
+{% block heading %}Crear una cuenta{% endblock %}
+
+{% block card_width %}max-w-xl{% endblock %}
+
+{% block content %}
+<form method="POST" class="space-y-6">
+
+  <!-- Nombre + Apellidos -->
+  <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+    <div>
+      <label class="block text-stone-700 text-sm font-medium mb-1">Nombre</label>
+      <input type="text" name="nombre" required
+        class="w-full px-4 py-2 border border-stone-300 rounded-lg focus:ring-2 focus:ring-amber-800 focus:outline-none"
+        placeholder="Tu nombre">
+    </div>
+
+    <div>
+      <label class="block text-stone-700 text-sm font-medium mb-1">Apellidos</label>
+      <input type="text" name="apellidos" required
+        class="w-full px-4 py-2 border border-stone-300 rounded-lg focus:ring-2 focus:ring-amber-800 focus:outline-none"
+        placeholder="Tus apellidos">
+    </div>
+  </div>
+
+  <!-- Usuario -->
+  <div>
+    <label class="block text-stone-700 text-sm font-medium mb-1">Nombre de usuario</label>
+    <input type="text" name="usuario" required
+      class="w-full px-4 py-2 border border-stone-300 rounded-lg focus:ring-2 focus:ring-amber-800 focus:outline-none"
+      placeholder="Elige un nombre de usuario">
+  </div>
+
+  <!-- Correo -->
+  <div>
+    <label class="block text-stone-700 text-sm font-medium mb-1">Correo electrónico</label>
+    <input type="email" name="gmail" required
+      class="w-full px-4 py-2 border border-stone-300 rounded-lg focus:ring-2 focus:ring-amber-800 focus:outline-none"
+      placeholder="correo@ejemplo.com">
+  </div>
+
+  <!-- Contraseñas -->
+  <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+    <div>
+      <label class="block text-stone-700 text-sm font-medium mb-1">Contraseña</label>
+      <input type="password" name="contrasena" required
+        class="w-full px-4 py-2 border border-stone-300 rounded-lg focus:ring-2 focus:ring-amber-800 focus:outline-none"
+        placeholder="Contraseña">
+    </div>
+
+    <div>
+      <label class="block text-stone-700 text-sm font-medium mb-1">Repite la contraseña</label>
+      <input type="password" name="contrarep" required
+        class="w-full px-4 py-2 border border-stone-300 rounded-lg focus:ring-2 focus:ring-amber-800 focus:outline-none"
+        placeholder="Repite la contraseña">
+    </div>
+  </div>
+
+  <!-- Botón -->
+  <button type="submit"
+    class="w-full bg-amber-800 text-white py-2 rounded-lg font-medium hover:bg-amber-900 transition">
+    Registrarse
+  </button>
+
+</form>
+{% endblock %}
+
+{% block footer_text %}
+¿Ya tienes una cuenta?
+<a href="{{ url_for('auth.login') }}" class="text-amber-800 font-medium hover:underline">
+  Inicia sesión
+</a>
+{% endblock %}
