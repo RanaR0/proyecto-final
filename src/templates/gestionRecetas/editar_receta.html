@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="es">
+
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Editar receta · RecetApp</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            fontFamily: { sans: ['Inter', 'system-ui', 'sans-serif'] }
+          }
+        }
+      }
+    </script>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/editar-receta.css') }}">
+  </head>
+
+  <body class="bg-stone-100 min-h-screen py-10 px-4">
+    <main class="max-w-3xl mx-auto bg-white rounded-2xl shadow-lg border border-stone-200 overflow-hidden">
+       {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+        <div class="fixed top-4 right-4 max-w-sm z-50 space-y-2">
+          {% for category, message in messages %}
+
+            {% set color = "red" if category in ["error", "danger"] else "green" %}
+
+            <div class="bg-{{ color }}-100 border border-{{ color }}-400 text-{{ color }}-700 px-4 py-3 rounded-lg shadow-lg flex items-start gap-3">
+              <span class="text-xl">
+                {% if color == "red" %}⚠️{% else %}✓{% endif %}
+              </span>
+              <div>
+                <p class="font-semibold">
+                  {{ "Error" if color == "red" else "Éxito" }}
+                </p>
+                <p class="text-sm">{{ message }}</p>
+              </div>
+            </div>
+
+          {% endfor %}
+        </div>
+        {% endif %}
+      {% endwith %}
+      <header class="px-6 py-5 border-b border-stone-100">
+        <h1 class="text-2xl font-bold text-stone-900">Editar receta</h1>
+        <p class="text-sm text-stone-500 mt-1">Actualiza los datos y cambia la imagen si lo necesitas.</p>
+      </header>
+
+      <form method="POST" enctype="multipart/form-data" class="p-6 space-y-6">
+        <section class="space-y-3">
+          <h2 class="text-sm font-semibold uppercase tracking-wide text-stone-500">Imagen de la receta</h2>
+
+          <div id="imagen-container"
+            class="w-full max-w-md mx-auto rounded-xl overflow-hidden border border-stone-200 bg-stone-50">
+            {% if receta is defined and receta and receta.imagen_url %}
+            <img id="preview-imagen-receta" src="{{ receta.imagen_url }}" alt="Portada actual de la receta"
+              class="w-full h-64 object-cover">
+            {% else %}
+            <div id="preview-placeholder"
+              class="w-full h-64 flex flex-col items-center justify-center gap-2 text-stone-400 bg-stone-50">
+              <svg class="w-10 h-10" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.4">
+                <path stroke-linecap="round" stroke-linejoin="round"
+                  d="M2.25 15.75l5.159-5.159a2.25 2.25 0 013.182 0l5.159 5.159m-1.5-1.5l1.409-1.409a2.25 2.25 0 013.182 0l2.909 2.909m-18 3.75h16.5a1.5 1.5 0 001.5-1.5V6a1.5 1.5 0 00-1.5-1.5H3.75A1.5 1.5 0 002.25 6v12a1.5 1.5 0 001.5 1.5zm10.5-11.25h.008v.008h-.008V8.25zm.375 0a.375.375 0 11-.75 0 .375.375 0 01.75 0z" />
+              </svg>
+              <span class="text-sm font-medium">Sin imagen</span>
+            </div>
+            {% endif %}
+          </div>
+
+          <div class="flex justify-center">
+            <button type="button" id="btn-cambiar-imagen"
+              class="mt-2 inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-amber-800 text-white font-semibold text-sm hover:bg-amber-900 active:scale-[0.985] transition">
+              <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round"
+                  d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L6.832 19.82a4.5 4.5 0 01-1.897 1.13l-2.685.8.8-2.685a4.5 4.5 0 011.13-1.897L16.863 4.487zm0 0L19.5 7.125" />
+              </svg>
+              Cambiar imagen
+            </button>
+          </div>
+
+          <input id="input-imagen-receta" type="file" name="imagen_receta" accept="image/*" class="hidden">
+        </section>
+
+        <section class="space-y-4">
+          <div>
+            <label for="nombre" class="block text-sm font-medium text-stone-700 mb-1.5">Nombre</label>
+            <input id="nombre" name="nombre" type="text" required
+              value="{{ receta.nombre if receta is defined and receta else '' }}" class="input-field w-full px-4 py-2.5 border border-stone-200 rounded-xl bg-stone-50
+                     focus:ring-2 focus:ring-amber-700/20 focus:border-amber-700 focus:outline-none
+                     text-stone-800 text-sm">
+          </div>
+
+          <div>
+            <label for="descripcion" class="block text-sm font-medium text-stone-700 mb-1.5">Descripción</label>
+            <textarea id="descripcion" name="descripcion" rows="4"
+              class="input-field w-full px-4 py-2.5 border border-stone-200 rounded-xl bg-stone-50
+                     focus:ring-2 focus:ring-amber-700/20 focus:border-amber-700 focus:outline-none
+                     text-stone-800 text-sm resize-none">{{ receta.descripcion if receta is defined and receta else '' }}</textarea>
+          </div>
+        </section>
+
+        <footer class="pt-2 flex flex-col sm:flex-row gap-3 sm:justify-end">
+          <button type="button" onclick="window.history.back()" class="inline-flex items-center justify-center px-4 py-2.5 rounded-xl border border-stone-300
+                   text-stone-700 font-medium text-sm hover:bg-stone-50 transition">
+            Cancelar
+          </button>
+          <button type="submit" class="inline-flex items-center justify-center px-5 py-2.5 rounded-xl bg-emerald-700
+                   text-white font-semibold text-sm hover:bg-emerald-800 active:scale-[0.985] transition">
+            Guardar cambios
+          </button>
+        </footer>
+      </form>
+    </main>
+
+    <script>
+      const btnCambiarImagen = document.getElementById('btn-cambiar-imagen');
+      const inputImagen = document.getElementById('input-imagen-receta');
+
+      btnCambiarImagen.addEventListener('click', () => {
+        inputImagen.click();
+      });
+
+      inputImagen.addEventListener('change', (event) => {
+        const [file] = event.target.files;
+        if (!file) return;
+
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          const container = document.getElementById('imagen-container');
+          let img = document.getElementById('preview-imagen-receta');
+          const placeholder = document.getElementById('preview-placeholder');
+
+          if (!img) {
+            // Primera vez que se elige imagen: reemplazar el div placeholder por un <img>
+            img = document.createElement('img');
+            img.id = 'preview-imagen-receta';
+            img.alt = 'Nueva portada de la receta';
+            img.className = 'w-full h-64 object-cover';
+            if (placeholder) {
+              placeholder.replaceWith(img);
+            } else {
+              container.appendChild(img);
+            }
+          }
+          img.src = e.target.result;
+        };
+        reader.readAsDataURL(file);
+      });
+    </script>
+  </body>
+
+</html>

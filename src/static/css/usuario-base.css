@@ -1,0 +1,49 @@
+body {
+  background: radial-gradient(ellipse at top left, #fef3c7 0%, #fffbf5 45%, #fdf4e7 100%);
+  min-height: 100vh;
+  font-family: 'Inter', system-ui, sans-serif;
+}
+
+.auth-card {
+  animation: slideUp 0.45s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(28px) scale(0.97);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.input-base {
+  transition: border-color 0.15s ease, box-shadow 0.15s ease, background-color 0.15s ease;
+}
+
+.input-base:focus {
+  background-color: #ffffff;
+}
+
+.btn-brand {
+  transition: background-color 0.15s ease, box-shadow 0.15s ease, transform 0.1s ease;
+}
+
+.btn-brand:hover {
+  box-shadow: 0 4px 20px rgba(120, 53, 15, 0.32);
+}
+
+.btn-brand:active {
+  transform: scale(0.985);
+}
+
+.brand-icon {
+  transition: transform 0.3s ease;
+}
+
+.brand-icon:hover {
+  transform: rotate(6deg) scale(1.05);
+}

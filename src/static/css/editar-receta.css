@@ -1,0 +1,11 @@
+body {
+  font-family: 'Inter', system-ui, sans-serif;
+}
+
+.input-field {
+  transition: border-color 0.15s ease, box-shadow 0.15s ease, background-color 0.15s ease;
+}
+
+.input-field:focus {
+  background-color: #ffffff;
+}

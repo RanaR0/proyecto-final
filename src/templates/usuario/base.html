@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="es">
+
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}EntreFogones{% endblock %} · EntreFogones</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            fontFamily: { sans: ['Inter', 'system-ui', 'sans-serif'] }
+          }
+        }
+      }
+    </script>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/usuario-base.css') }}">
+  </head>
+
+  <body class="min-h-screen flex items-center justify-center p-4 py-12">
+
+    <div class="w-full {% block card_width %}max-w-md{% endblock %} auth-card">
+
+      <!-- ── Branding ── -->
+      <div class="flex flex-col items-center mb-8">
+        <div class="brand-icon w-14 h-14 bg-amber-800 rounded-2xl flex items-center justify-center shadow-lg mb-4">
+          <svg class="w-7 h-7 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8">
+            <path stroke-linecap="round" stroke-linejoin="round"
+              d="M12 6.042A8.967 8.967 0 006 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 016 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 016-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0018 18a8.967 8.967 0 00-6 2.292m0-14.25v14.25" />
+          </svg>
+        </div>
+        <h1 class="text-2xl font-bold text-stone-900 tracking-tight">EntreFogones</h1>
+        <p class="text-stone-500 text-sm mt-0.5">Tu recetario digital</p>
+      </div>
+
+      <!-- ── Card ── -->
+      <div class="bg-white rounded-3xl shadow-2xl shadow-stone-200/60 border border-stone-100 overflow-hidden">
+
+        <!-- Card header -->
+        <div class="px-8 pt-8 pb-6 border-b border-stone-100">
+          <h2 class="text-xl font-semibold text-stone-900">{% block heading %}{% endblock %}</h2>
+        </div>
+
+        <!-- Flash messages -->
+        {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+        <div class="px-8 pt-6 space-y-2">
+          {% for category, message in messages %}
+          <div class="flex items-start gap-3 px-4 py-3 rounded-xl text-sm font-medium
+                {% if category == 'error' %}
+                  bg-red-50 border border-red-100 text-red-700
+                {% elif category == 'success' %}
+                  bg-emerald-50 border border-emerald-100 text-emerald-700
+                {% else %}
+                  bg-amber-50 border border-amber-100 text-amber-700
+                {% endif %}">
+            {% if category == 'error' %}
+            <svg class="w-4 h-4 mt-0.5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"
+              stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round"
+                d="M12 9v3.75m9.303 3.376c.866 1.5-.217 3.374-1.948 3.374H4.645c-1.73 0-2.813-1.874-1.948-3.374l7.42-12.748c.866-1.5 3.032-1.5 3.898 0l7.42 12.748zM12 15.75h.007v.008H12v-.008z" />
+            </svg>
+            {% elif category == 'success' %}
+            <svg class="w-4 h-4 mt-0.5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"
+              stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round"
+                d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+            {% else %}
+            <svg class="w-4 h-4 mt-0.5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"
+              stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round"
+                d="M11.25 11.25l.041-.02a.75.75 0 011.063.852l-.708 2.836a.75.75 0 001.063.853l.041-.021M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-9-3.75h.008v.008H12V8.25z" />
+            </svg>
+            {% endif %}
+            <span>{{ message }}</span>
+          </div>
+          {% endfor %}
+        </div>
+        {% endif %}
+        {% endwith %}
+
+        <!-- Card body -->
+        <div class="px-8 py-7">
+          {% block content %}{% endblock %}
+        </div>
+
+        <!-- Card footer -->
+        <div class="px-8 py-5 bg-stone-50 border-t border-stone-100 text-center text-sm text-stone-500">
+          {% block footer_text %}{% endblock %}
+        </div>
+
+      </div>
+
+      <p class="text-center text-xs text-stone-400 mt-6">
+        © 2026 EntreFogones — Todos los derechos reservados
+      </p>
+
+    </div>
+
+  </body>
+  
+</html>
